@@ -115,7 +115,7 @@ class _InputPageState extends State<InputPage> {
                 ],
               ),
               body: Padding(
-                padding: const EdgeInsets.only(left: 16, right: 16),
+                padding: const EdgeInsets.only(left: 24, right: 24),
                 child: SingleChildScrollView(
                   controller: _scrollController,
                   child: Column(
@@ -146,11 +146,9 @@ class _InputPageState extends State<InputPage> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 55.0),
                       child: FloatingActionButton(
-                        onPressed: () {
-                          // Action for other floating buttons
-                        },
+                        onPressed: () {},
                         mini: true,
-                        child: Icon(Icons.abc),
+                        child: Icon(Icons.watch_later_outlined),
                       ),
                     ),
                     Padding(

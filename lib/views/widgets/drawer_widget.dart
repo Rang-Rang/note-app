@@ -21,28 +21,13 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               child: Row(
                 children: [
                   Text(
-                    'TO-DO',
+                    'Note App',
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
             ),
             Divider(),
-            Card(
-              margin: EdgeInsets.only(bottom: 6, left: 8, right: 8),
-              child: ListTile(
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 1,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                leading: Icon(Icons.checklist),
-                title: const Text('TO-DO'),
-                onTap: () {},
-              ),
-            ),
             Card(
               margin: EdgeInsets.only(bottom: 6, left: 8, right: 8),
               child: ListTile(
@@ -68,8 +53,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                leading: Icon(Icons.manage_accounts),
-                title: const Text('Manage accounts'),
+                leading: Icon(Icons.checklist),
+                title: const Text('TO-DO'),
                 onTap: () {},
               ),
             ),

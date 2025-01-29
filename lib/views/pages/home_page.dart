@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todo_list/views/widgets/todo_widget.dart';
+import 'package:todo_list/views/widgets/note_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,15 +16,13 @@ class _HomePageState extends State<HomePage> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            TodoWidget(
+            NoteWidget(
               title: 'Todo Title',
               subtitle: 'Todo Subtitle',
-              date: 'Today',
             ),
-            TodoWidget(
+            NoteWidget(
               title: 'Todo Title',
               subtitle: 'Todo Subtitle',
-              date: 'Tomorrow',
             ),
           ],
         ),

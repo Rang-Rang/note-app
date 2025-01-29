@@ -2,23 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:todo_list/data/notifier.dart';
 import '../../data/constant.dart';
 
-class TodoWidget extends StatefulWidget {
-  const TodoWidget({
+class NoteWidget extends StatefulWidget {
+  const NoteWidget({
     super.key,
     required this.title,
     required this.subtitle,
-    this.date,
   });
 
   final String title;
   final String subtitle;
-  final String? date;
 
   @override
-  State<TodoWidget> createState() => _TodoWidgetState();
+  State<NoteWidget> createState() => _TodoWidgetState();
 }
 
-class _TodoWidgetState extends State<TodoWidget> {
+class _TodoWidgetState extends State<NoteWidget> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<bool>(
@@ -57,7 +55,7 @@ class _TodoWidgetState extends State<TodoWidget> {
                 width: tenPercentWidth(context),
                 child: IconButton(
                   onPressed: () {
-                    isRed.value = !isRed.value; // Toggle color state
+                    isRed.value = !isRed.value; 
                   },
                   icon: CircleAvatar(
                     backgroundColor: primaryColor,
@@ -78,7 +76,6 @@ class _TodoWidgetState extends State<TodoWidget> {
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  Text("Due date: ${widget.date}"),
                 ],
               ),
             ),
