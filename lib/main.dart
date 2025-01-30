@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:todo_list/data/constant.dart';
-import 'package:todo_list/data/notifier.dart';
-import 'package:todo_list/views/widget_tree.dart';
+import 'package:todo_list/src/res/constant.dart';
+import 'package:todo_list/src/res/notifier.dart';
+import 'package:todo_list/src/views/widget_tree.dart';
 
 void main() {
   runApp(const MyApp());

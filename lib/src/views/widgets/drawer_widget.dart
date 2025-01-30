@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:todo_list/src/views/widgets/drawer_card.dart';
+
+import '../../res/notifier.dart';
 
 class DrawerWidget extends StatefulWidget {
   const DrawerWidget({super.key});
@@ -28,22 +31,19 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               ),
             ),
             Divider(),
-            Card(
-              margin: EdgeInsets.only(bottom: 6, left: 8, right: 8),
-              child: ListTile(
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 1,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                leading: Icon(Icons.description),
-                title: const Text('Note'),
-                onTap: () {},
-              ),
+            DrawerCard(
+              title: 'Note',
+              icon: Icon(Icons.description),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            DrawerCard(
+              title: 'TO-DO',
+              icon: Icon(Icons.checklist),
             ),
             Card(
+              elevation: 0,
               margin: EdgeInsets.only(bottom: 6, left: 8, right: 8),
               child: ListTile(
                 contentPadding: const EdgeInsets.symmetric(
@@ -53,25 +53,30 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                leading: Icon(Icons.checklist),
-                title: const Text('TO-DO'),
-                onTap: () {},
+                leading: ValueListenableBuilder(
+                  valueListenable: isDarkNotifier,
+                  builder: (context, isDarkMode, child) {
+                    return Icon(
+                        isDarkMode ? Icons.dark_mode : Icons.light_mode);
+                  },
+                ),
+                title: ValueListenableBuilder(
+                  valueListenable: isDarkNotifier,
+                  builder: (context, isDarkMode, child) {
+                    return Text(isDarkMode ? "Dark mode" : "Light mode");
+                  },
+                ),
+                onTap: () {
+                  isDarkNotifier.value = !isDarkNotifier.value;
+                },
               ),
             ),
             Spacer(),
-            Card(
-              margin: EdgeInsets.only(bottom: 16, left: 8, right: 8),
-              child: ListTile(
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 1,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                leading: Icon(Icons.exit_to_app, color: Colors.red),
-                title: const Text('Exit', style: TextStyle(color: Colors.red)),
-                onTap: () {},
+            Container(
+              margin: EdgeInsets.only(bottom: 6, left: 8, right: 8),
+              child: DrawerCard(
+                title: 'Exit',
+                icon: Icon(Icons.exit_to_app),
               ),
             ),
           ],
