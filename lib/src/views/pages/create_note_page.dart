@@ -78,63 +78,72 @@ class _CreateNotePageState extends State<CreateNotePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Builder(
-        builder: (BuildContext context) {
-          return Scaffold(
-            appBar: AppBar(
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Row(
-                    children: [
-                      ValueListenableBuilder(
-                        valueListenable: isPin,
-                        builder: (context, value, child) {
-                          return IconButton(
-                            onPressed: () {
-                              isPin.value = !isPin.value;
-                            },
-                            icon: pin,
+    return ValueListenableBuilder<int>(
+      valueListenable: avatarColorIndexNotifier,
+      builder: (context, index, child) {
+        final currentColorList =
+            isDarkNotifier.value ? darkModeColors : lightModeColors;
+
+        Color backgroundColor = currentColorList[index];
+        Color appBar = currentColorList[index];
+
+        return Scaffold(
+          backgroundColor: backgroundColor.withValues(alpha: 0.7),
+          appBar: AppBar(
+            backgroundColor: appBar.withValues(alpha: 0.1),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: _scrollToPosition,
+                      icon: ValueListenableBuilder(
+                        valueListenable: scrollButtonIcon,
+                        builder: (context, icon, child) {
+                          return icon;
+                        },
+                      ),
+                    ),
+                    ValueListenableBuilder(
+                      valueListenable: isPin,
+                      builder: (context, value, child) {
+                        return IconButton(
+                          onPressed: () {
+                            isPin.value = !isPin.value;
+                          },
+                          icon: pin,
+                        );
+                      },
+                    ),
+                    IconButton(
+                      onPressed: _changeAvatarColor,
+                      icon: ValueListenableBuilder<int>(
+                        valueListenable: avatarColorIndexNotifier,
+                        builder: (context, index, child) {
+                          final currentColorList = isDarkNotifier.value
+                              ? darkModeColors
+                              : lightModeColors;
+
+                          Color avatarColor = currentColorList[index];
+
+                          return CircleAvatar(
+                            radius: 10,
+                            backgroundColor: avatarColor,
                           );
                         },
                       ),
-                      IconButton(
-                        onPressed: _scrollToPosition,
-                        icon: ValueListenableBuilder(
-                          valueListenable: scrollButtonIcon,
-                          builder: (context, icon, child) {
-                            return icon;
-                          },
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: _changeAvatarColor,
-                        icon: ValueListenableBuilder<int>(
-                          valueListenable: avatarColorIndexNotifier,
-                          builder: (context, index, child) {
-                            final currentColorList = isDarkNotifier.value
-                                ? darkModeColors
-                                : lightModeColors;
-
-                            Color avatarColor = currentColorList[index];
-
-                            return CircleAvatar(
-                              radius: 10,
-                              backgroundColor: avatarColor,
-                            );
-                          },
-                        ),
-                      )
-                    ],
-                  ),
+                    )
+                  ],
                 ),
-              ],
-            ),
-            body: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: SingleChildScrollView(
-                controller: _scrollController,
+              ),
+            ],
+          ),
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              child: Container(
                 child: Column(
                   children: [
                     TextFormField(
@@ -158,9 +167,9 @@ class _CreateNotePageState extends State<CreateNotePage> {
                 ),
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

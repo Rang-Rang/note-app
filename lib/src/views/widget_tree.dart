@@ -67,16 +67,27 @@ class _WidgetTreeState extends State<WidgetTree> {
       ),
       appBar: AppBar(
         actions: [
+          IconButton(
+            onPressed: _scrollToPosition,
+            icon: ValueListenableBuilder(
+              valueListenable: scrollButtonIconHome,
+              builder: (context, icon, child) {
+                return icon;
+              },
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.only(right: 4.0),
-            child: IconButton(
-              onPressed: _scrollToPosition,
-              icon: ValueListenableBuilder(
-                valueListenable: scrollButtonIconHome,
-                builder: (context, icon, child) {
-                  return icon;
-                },
-              ),
+            child: ValueListenableBuilder(
+              valueListenable: isListViews,
+              builder: (context, value, child) {
+                return IconButton(
+                  onPressed: () {
+                    isListViews.value = !isListViews.value;
+                  },
+                  icon: listViews,
+                );
+              },
             ),
           ),
         ],

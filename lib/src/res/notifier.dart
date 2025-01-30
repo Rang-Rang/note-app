@@ -34,7 +34,7 @@ final List<Color> lightModeColors = [
   Colors.blue,
   Colors.green,
   Colors.orange,
-  Colors.purple,
+  const Color.fromARGB(255, 220, 31, 254),
   Colors.red,
   Colors.teal,
   Colors.cyan,
@@ -44,7 +44,7 @@ final List<Color> lightModeColors = [
 ];
 
 final List<Color> darkModeColors = [
-  Colors.blueGrey,
+  const Color.fromARGB(255, 2, 171, 255),
   Colors.cyan,
   Colors.deepPurple,
   Colors.greenAccent,

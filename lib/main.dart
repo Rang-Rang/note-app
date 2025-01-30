@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
       valueListenable: isDarkNotifier,
       builder: (context, value, child) {
         return MaterialApp(
+          title: AppStrings.appName,
           theme: ThemeData(
             useMaterial3: true,
             fontFamily: 'Poppins',
