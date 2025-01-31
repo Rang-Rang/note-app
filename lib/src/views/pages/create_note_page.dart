@@ -1,23 +1,36 @@
 import 'package:flutter/material.dart';
 import '../../res/notifier.dart';
+import 'package:intl/intl.dart';
+import '../../services/database_helper.dart';
 
 class CreateNotePage extends StatefulWidget {
-  const CreateNotePage({
-    super.key,
-  });
+  final Map<String, dynamic>? note;
+  const CreateNotePage({super.key, this.note});
 
   @override
   State<CreateNotePage> createState() => _CreateNotePageState();
 }
 
 class _CreateNotePageState extends State<CreateNotePage> {
+  final DatabaseHelper _dbHelper = DatabaseHelper();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  DateTime? _lastEditedTime;
 
   @override
   void initState() {
     super.initState();
+    if (widget.note != null) {
+      _titleController.text = widget.note!['title'];
+      _noteController.text = widget.note!['note'];
+      if (widget.note!['onModified'] != null) {
+        _lastEditedTime =
+            DateTime.fromMillisecondsSinceEpoch(widget.note!['onModified']);
+      } else {
+        _lastEditedTime = null;
+      }
+    }
     _scrollController.addListener(_scrollListener);
   }
 
@@ -28,6 +41,49 @@ class _CreateNotePageState extends State<CreateNotePage> {
     _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
     super.dispose();
+  }
+
+  Future<void> _saveNote() async {
+    if (_titleController.text.isEmpty && _noteController.text.isEmpty) {
+      return;
+    }
+
+    final now = DateTime.now();
+    if (widget.note == null) {
+      await _dbHelper.addNote(
+        _titleController.text,
+        _noteController.text,
+      );
+    } else {
+      await _dbHelper.updateNote(
+        widget.note!['id'],
+        _titleController.text,
+        _noteController.text,
+      );
+    }
+    setState(() {
+      _lastEditedTime = now;
+    });
+  }
+
+  Future<bool> onWillPop() async {
+    if (_titleController.text.isEmpty && _noteController.text.isEmpty) {}
+    await _saveNote();
+    return true;
+  }
+
+  String _getLastEditedText() {
+    if (_lastEditedTime == null) return 'Edited just now';
+    final now = DateTime.now();
+    final difference = now.difference(_lastEditedTime!);
+
+    if (difference.inMinutes < 1) return 'Edited just now';
+    if (difference.inMinutes < 60)
+      return 'Edited ${difference.inMinutes} minutes ago';
+    if (difference.inHours < 24)
+      return 'Edited ${difference.inHours} hours ago';
+
+    return 'Edited on ${DateFormat.yMMMd().add_Hm().format(_lastEditedTime!)}';
   }
 
   void _scrollListener() {
@@ -63,113 +119,84 @@ class _CreateNotePageState extends State<CreateNotePage> {
     }
   }
 
-  void _changeAvatarColor() {
-    // Select color list based on current theme (dark or light)
-    final currentColorList =
-        isDarkNotifier.value ? darkModeColors : lightModeColors;
-
-    // Increment the index, and wrap it around if it exceeds the list length
-    int newIndex =
-        (avatarColorIndexNotifier.value + 1) % currentColorList.length;
-
-    // Update the color index
-    avatarColorIndexNotifier.value = newIndex;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<int>(
-      valueListenable: avatarColorIndexNotifier,
-      builder: (context, index, child) {
-        final currentColorList =
-            isDarkNotifier.value ? darkModeColors : lightModeColors;
-
-        Color backgroundColor = currentColorList[index];
-        Color appBar = currentColorList[index];
-
-        return Scaffold(
-          backgroundColor: backgroundColor.withValues(alpha: 0.7),
-          appBar: AppBar(
-            backgroundColor: appBar.withValues(alpha: 0.1),
-            actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: _scrollToPosition,
-                      icon: ValueListenableBuilder(
-                        valueListenable: scrollButtonIcon,
-                        builder: (context, icon, child) {
-                          return icon;
-                        },
-                      ),
-                    ),
-                    ValueListenableBuilder(
-                      valueListenable: isPin,
-                      builder: (context, value, child) {
-                        return IconButton(
-                          onPressed: () {
-                            isPin.value = !isPin.value;
-                          },
-                          icon: pin,
-                        );
+    return Scaffold(
+      appBar: AppBar(
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: _scrollToPosition,
+                  icon: ValueListenableBuilder(
+                    valueListenable: scrollButtonIcon,
+                    builder: (context, icon, child) {
+                      return icon;
+                    },
+                  ),
+                ),
+                ValueListenableBuilder(
+                  valueListenable: isPin,
+                  builder: (context, value, child) {
+                    return IconButton(
+                      onPressed: () {
+                        isPin.value = !isPin.value;
                       },
-                    ),
-                    IconButton(
-                      onPressed: _changeAvatarColor,
-                      icon: ValueListenableBuilder<int>(
-                        valueListenable: avatarColorIndexNotifier,
-                        builder: (context, index, child) {
-                          final currentColorList = isDarkNotifier.value
-                              ? darkModeColors
-                              : lightModeColors;
-
-                          Color avatarColor = currentColorList[index];
-
-                          return CircleAvatar(
-                            radius: 10,
-                            backgroundColor: avatarColor,
-                          );
-                        },
+                      icon: pin,
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      body: WillPopScope(
+        onWillPop: onWillPop,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: _scrollController,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        controller: _titleController,
+                        maxLines: null,
+                        style: TextStyle(fontSize: 24),
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Title',
+                        ),
                       ),
-                    )
-                  ],
+                      TextFormField(
+                        controller: _noteController,
+                        maxLines: null,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Note',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Text(
+                  _getLastEditedText(),
+                  style: TextStyle(color: Colors.grey, fontSize: 12),
                 ),
               ),
             ],
           ),
-          body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              child: Container(
-                child: Column(
-                  children: [
-                    TextFormField(
-                      controller: _titleController,
-                      maxLines: null,
-                      style: TextStyle(fontSize: 24),
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Title',
-                      ),
-                    ),
-                    TextFormField(
-                      controller: _noteController,
-                      maxLines: null,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Note',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

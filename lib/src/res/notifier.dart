@@ -14,8 +14,6 @@ ValueNotifier<Position> scrollButtonPositionHome = ValueNotifier(Position.top);
 ValueNotifier<Icon> scrollButtonIconHome =
     ValueNotifier(Icon(Icons.arrow_downward));
 
-ValueNotifier<int> avatarColorIndexNotifier = ValueNotifier(0);
-
 Brightness get darkMode {
   return isDarkNotifier.value ? Brightness.light : Brightness.dark;
 }
@@ -27,33 +25,7 @@ Icon get pin {
 }
 
 Icon get listViews {
-  return isListViews.value ? Icon(Icons.splitscreen) : Icon(Icons.grid_view);
+  return isListViews.value ? Icon(Icons.grid_view) : Icon(Icons.splitscreen);
 }
-
-final List<Color> lightModeColors = [
-  Colors.blue,
-  Colors.green,
-  Colors.orange,
-  const Color.fromARGB(255, 220, 31, 254),
-  Colors.red,
-  Colors.teal,
-  Colors.cyan,
-  Colors.amber,
-  Colors.indigo,
-  Colors.deepOrange,
-];
-
-final List<Color> darkModeColors = [
-  const Color.fromARGB(255, 2, 171, 255),
-  Colors.cyan,
-  Colors.deepPurple,
-  Colors.greenAccent,
-  Colors.redAccent,
-  Colors.pinkAccent,
-  Colors.purpleAccent,
-  Colors.lightBlueAccent,
-  Colors.amberAccent,
-  Colors.tealAccent,
-];
 
 enum Position { top, bottom }
